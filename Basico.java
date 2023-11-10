@@ -3,5 +3,14 @@ public class Basico {
         String nombre;
         nombre = "JJOO";
         System.out.println("HOLA "+nombre);
+        System.out.println("HOLA "+nombre);
+        System.out.println("HOLA "+nombre);
+        System.out.println("HOLA "+nombre);
+        System.out.println("HOLA "+nombre);
+        System.out.println("HOLA "+nombre);
+        System.out.println("HOLA "+nombre);
+        System.out.println("HOLA "+nombre);
+
+        System.out.println("HOLA "+nombre);
     }
 }
