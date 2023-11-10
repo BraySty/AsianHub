@@ -2,15 +2,8 @@ public class Basico {
     public static void main(String[] args) {
         String nombre;
         nombre = "JJOO";
-        System.out.println("HOLA "+nombre);
-        System.out.println("HOLA "+nombre);
-        System.out.println("HOLA "+nombre);
-        System.out.println("HOLA "+nombre);
-        System.out.println("HOLA "+nombre);
-        System.out.println("HOLA "+nombre);
-        System.out.println("HOLA "+nombre);
-        System.out.println("HOLA "+nombre);
-
-        System.out.println("HOLA "+nombre);
+        for(int i = 0;i<5;i++){
+            System.out.println("HOLA "+nombre);
+        }
     }
 }
