@@ -17,8 +17,8 @@ public class Imagen {
     private int ancho;
 
     public Imagen(File archivo) throws IOException {
-        getSize();
         this.archivo = archivo;
+        getSize();
     }
 
     public File getArchivo() {
@@ -110,5 +110,32 @@ public class Imagen {
             }
         }
         return imagen;
+    }
+    
+    /**
+     * 
+     * @param valor
+     * @return 
+     */
+    public BufferedImage loadImageByPixelHeightSize(int valor) {
+        BufferedImage image = null;
+        int alturaImagen;
+        int anchuraImagen;
+        if (archivo.isFile() && (archivo.getName().endsWith("png")) || archivo.getName().endsWith("jpg") || archivo.getName().endsWith("jpeg") || archivo.getName().endsWith(".gif")) {
+            try {
+                image = ImageIO.read(archivo);
+                if (image != null) {
+                    alturaImagen = valor;
+                    anchuraImagen = (image.getWidth() * valor) / image.getHeight();
+                    double reescaladoAltura = (alturaImagen);
+                    double reescaladoAnchura = (anchuraImagen);
+                    image.flush();
+                    image = resizeImage(ImageIO.read(archivo), (int) reescaladoAnchura, (int) reescaladoAltura);
+                }
+            } catch (IOException e) {
+                System.out.println("read error: " + e.getMessage());
+            }
+        }
+        return image;
     }
 }
