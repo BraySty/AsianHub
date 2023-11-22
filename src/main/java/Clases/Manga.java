@@ -1,11 +1,13 @@
 package Clases;
 
-import java.util.Date;
+import java.sql.Date;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- *
- * @author Kongo
- */
+@Data
+@Builder
+@NoArgsConstructor
 public class Manga {
     private int ID;
     private String Nombre;
@@ -20,8 +22,6 @@ public class Manga {
         this.Lanzamiento = Lanzamiento;
         this.iconPath = iconPath;
     }
-    
-    
-    
-    }
+
+}
 
