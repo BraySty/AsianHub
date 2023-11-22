@@ -2,21 +2,15 @@ package View;
 
 import Clases.Imagen;
 import Clases.Manga;
-import Console.Main;
+import Clases.Usuario;
 import DAO.MangaDAO;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.sql.Date;
 import java.util.ArrayList;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.RowSorter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -24,6 +18,7 @@ import javax.swing.table.TableRowSorter;
  */
 public class Principal extends javax.swing.JFrame {
 
+    Usuario user;
     int imageHeight = 150;
     ArrayList<Manga> Manga;
     private String[] titulo = new String[]{"Imagen", "Nombre", "Genero", "Fecha de lanzamiento"};
@@ -36,18 +31,18 @@ public class Principal extends javax.swing.JFrame {
         this.setVisible(true);
         inicializarTabla();
     }
+    
+    public void setUsuario(Usuario user) {
+        this.user = user;
+    }
 
     private void loadArrayFromDatabase() {
-        try {
-            URL resource = Main.class.getResource("/SQL/AsianHub.db");
-            String url = "jdbc:sqlite:" + Paths.get(resource.toURI()).toFile();
-            String usuario = "";
-            String password = "";
-            MangaDAO mdao = new MangaDAO(url, usuario, password);
-            Manga = (ArrayList<Manga>) mdao.selectAll();
-        } catch (URISyntaxException ex) {
-            ex.printStackTrace();
-        }
+        String base = System.getProperty("user.dir") + "\\SQL\\AsianHub.db";
+        String url = "jdbc:sqlite:" + base;
+        String usuario = "";
+        String password = "";
+        MangaDAO mdao = new MangaDAO(url, usuario, password);
+        Manga = (ArrayList<Manga>) mdao.selectAll();
     }
 
     /**
@@ -107,7 +102,7 @@ public class Principal extends javax.swing.JFrame {
                 Imagen imagen = null;
                 if (imgPath != null) {
                     File file = new File(imgPath);
-                    System.out.println(file.getPath().substring(System.getProperty("user.dir").length()));
+                    //System.out.println(file.getPath().substring(System.getProperty("user.dir").length()));
                     if (file.exists() && file.isFile() && (file.getName().endsWith("png")) || file.getName().endsWith("jpg") || file.getName().endsWith("jpeg") || file.getName().endsWith(".gif")) {
                         imagen = new Imagen(file);
                         imageIcon = new ImageIcon(imagen.loadImageByPixelHeightSize(imageHeight));
@@ -181,6 +176,11 @@ public class Principal extends javax.swing.JFrame {
                 "Titulo", "Tipo", "Capitulos", "Volumenes"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -273,8 +273,8 @@ public class Principal extends javax.swing.JFrame {
 
     private void changepasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changepasswordActionPerformed
         passwordchange passwordventana = new passwordchange(this, false);
+        passwordventana.setUsuario(user);
         passwordventana.setVisible(true);
-        System.out.println("00000000002");
     }//GEN-LAST:event_changepasswordActionPerformed
 
     private void settinguserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settinguserActionPerformed
@@ -289,6 +289,16 @@ public class Principal extends javax.swing.JFrame {
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         deletemanga Addmanga = new deletemanga(this, true);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        int posX = jTable1.getSelectedRow();
+        int posY = jTable1.getSelectedColumn();
+        //System.out.println(jTable1.getValueAt(posX, posY));
+        VolumenView vv = new VolumenView(this, false);
+        vv.setManga(Manga.get(posX));
+        vv.inicializarTabla();
+        vv.setVisible(true);
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments

@@ -4,7 +4,10 @@
  */
 package Launcher;
 
+import Clases.Usuario;
+import DAO.UsuarioDAO;
 import View.Principal;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -36,6 +39,7 @@ public class inicio extends javax.swing.JFrame {
         usuarioGet = new javax.swing.JTextField();
         passwordGet = new javax.swing.JPasswordField();
         inicioButton = new javax.swing.JButton();
+        jButtonCrearUsuario = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -71,6 +75,13 @@ public class inicio extends javax.swing.JFrame {
             }
         });
 
+        jButtonCrearUsuario.setText("Crear usuario");
+        jButtonCrearUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCrearUsuarioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -85,7 +96,9 @@ public class inicio extends javax.swing.JFrame {
                     .addComponent(passwordGet))
                 .addContainerGap(245, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(148, 148, 148)
+                .addComponent(jButtonCrearUsuario)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(inicioButton)
                 .addGap(129, 129, 129))
         );
@@ -103,7 +116,9 @@ public class inicio extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(passwordGet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
-                .addComponent(inicioButton)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(inicioButton)
+                    .addComponent(jButtonCrearUsuario))
                 .addGap(25, 25, 25))
         );
 
@@ -126,9 +141,45 @@ public class inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_usuarioGetActionPerformed
 
     private void inicioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inicioButtonActionPerformed
-        Principal principal = new Principal();
-        this.setVisible(false);
+        String base = System.getProperty("user.dir") + "\\SQL\\AsianHub.db";
+        String urlDB = "jdbc:sqlite:" + base;
+        String usuarioDB = "";
+        String passwordDB = "";
+        UsuarioDAO udao = new UsuarioDAO(urlDB, usuarioDB, passwordDB);
+        Usuario user = new Usuario(0, usuarioGet.getText(), passwordGet.getText(), 0);
+        Usuario usuario = (Usuario) udao.selectWhereNombre(user);
+        if (usuario != null) {
+            JOptionPane.showMessageDialog(this, "Credenciales correctas.", "Error", JOptionPane.INFORMATION_MESSAGE);
+            Principal principal = new Principal();
+            principal.setUsuario(usuario);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrecta.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_inicioButtonActionPerformed
+
+    private void jButtonCrearUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCrearUsuarioActionPerformed
+        String base = System.getProperty("user.dir") + "\\SQL\\AsianHub.db";
+        String urlDB = "jdbc:sqlite:" + base;
+        String usuarioDB = "";
+        String passwordDB = "";
+        UsuarioDAO udao = new UsuarioDAO(urlDB, usuarioDB, passwordDB);
+        Usuario user = new Usuario(0, usuarioGet.getText(), passwordGet.getText(), 0);
+        Usuario usuario = (Usuario) udao.selectWhereNombre(user);
+        System.out.println(urlDB);
+        if (usuario == null) {
+            usuario = (Usuario)udao.selectLastUser();
+            user.setID(usuario.getID() + 1);
+            boolean operacion = udao.insert(user);
+            if (operacion) {
+                JOptionPane.showMessageDialog(this, "Credenciales correctas.", "Error", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Ocurrio un error", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Este usuario ya existe.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonCrearUsuarioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -139,6 +190,7 @@ public class inicio extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton inicioButton;
+    private javax.swing.JButton jButtonCrearUsuario;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

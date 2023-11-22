@@ -16,11 +16,20 @@ public class Usuario {
     private int ID;
     private String user;
     private String password;
+    private int admind;
 
-    public Usuario(int ID, String user, String password) {
+    /**
+     * Constructor parametrizado
+     * @param ID
+     * @param user
+     * @param password
+     * @param admind 0 es usuario normal, 1 es administrador.
+     */
+    public Usuario(int ID,String user, String password, int admind) {
         this.ID = ID;
         this.user = user;
         this.password = password;
+        this.admind = admind;
     }
     
 }

@@ -70,11 +70,11 @@ public class UsuarioDAO implements CRUD{
                     PreparedStatement ps = conexion.prepareStatement(gs.generalINSERT(tabla, columna));
                     ps.setInt(1, user.getID());
                     ps.setString(2, user.getUser());
-                    ps.setString(2, user.getPassword());
+                    ps.setString(3, user.getPassword());
+                    ps.setInt(4, user.getAdmind());
                     lineasAfectadas = ps.executeUpdate();
                     if(lineasAfectadas > 0){
                         resultadoOperacion = true;
-                        System.out.println("Volumen creado.");
                     }
                 }
                 conexion.close();
@@ -96,7 +96,8 @@ public class UsuarioDAO implements CRUD{
                     int id = rs.getInt(columna.get(0));
                     String nombre = rs.getString(columna.get(1));
                     String userPassword = rs.getString(columna.get(2));
-                    volumenes.add(new Usuario(id, nombre, userPassword));
+                    int userAdmind = rs.getInt(columna.get(3));
+                    volumenes.add(new Usuario(id, nombre, userPassword, userAdmind));
                 }
                 conexion.close();
             }
@@ -119,7 +120,52 @@ public class UsuarioDAO implements CRUD{
                     int id = rs.getInt(columna.get(0));
                     String nombre = rs.getString(columna.get(1));
                     String userPassword = rs.getString(columna.get(2));
-                    nuevouser = new Usuario(id, nombre, userPassword);
+                    int userAdmind = rs.getInt(columna.get(3));
+                    nuevouser = new Usuario(id, nombre, userPassword, userAdmind);
+                }
+                conexion.close();
+            }
+        } catch (SQLException ex) {
+            printSQLException(ex);
+        } 
+        return nuevouser;
+    }
+    
+    public Object selectLastUser() {
+        Usuario nuevouser = null;
+        try(Connection conexion = getConnection()) {
+            if(conexion != null) {
+                PreparedStatement ps = conexion.prepareStatement("SELECT * FROM Usuario ORDER BY ID DESC LIMIT 1;");
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt(columna.get(0));
+                    String nombre = rs.getString(columna.get(1));
+                    String userPassword = rs.getString(columna.get(2));
+                    int userAdmind = rs.getInt(columna.get(3));
+                    nuevouser = new Usuario(id, nombre, userPassword, userAdmind);
+                }
+                conexion.close();
+            }
+        } catch (SQLException ex) {
+            printSQLException(ex);
+        } 
+        return nuevouser;
+    }
+    
+    public Object selectWhereNombre(Object objeto) {
+        Usuario user = (Usuario) objeto;
+        Usuario nuevouser = null;
+        try(Connection conexion = getConnection()) {
+            if(conexion != null) {
+                PreparedStatement ps = conexion.prepareStatement(gs.selectiveSELECT(tabla, columna,1));
+                ps.setString(1, user.getUser());
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt(columna.get(0));
+                    String nombre = rs.getString(columna.get(1));
+                    String userPassword = rs.getString(columna.get(2));
+                    int userAdmind = rs.getInt(columna.get(3));
+                    nuevouser = new Usuario(id, nombre, userPassword, userAdmind);
                 }
                 conexion.close();
             }
@@ -140,10 +186,11 @@ public class UsuarioDAO implements CRUD{
                     int id = user.getID();
                     String User = user.getUser();
                     String userPassword = user.getPassword();
+                    int admin = user.getAdmind();
                     // Debido a la forma en que PreparedStatement crea los comandos, los update no son admitidos en sqlite
                     // para que los campos sean admitidos nesesita esta entre "" pero PreparedStatement no los encierra.
                     // Tambiem, para que el programa no errores con la fecha, se deben ingresar y recoger como Long.
-                    String exec = "UPDATE `" + tabla + "` SET User=\"" + user + "\",Password=\"" + userPassword + "\" WHERE ID=\"" + id + "\";";
+                    String exec = "UPDATE `" + tabla + "` SET User=\"" + user + "\",Password=\"" + userPassword + "\",Admind=\"" + admin + "\" WHERE ID=\"" + id + "\";";
                     PreparedStatement ps = conexion.prepareStatement(exec);
                     lineasAfectadas = ps.executeUpdate();
                     if(lineasAfectadas > 0){

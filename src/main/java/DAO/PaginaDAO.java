@@ -99,9 +99,32 @@ public class PaginaDAO implements CRUD{
                 ResultSet rs = statement.executeQuery(gs.generalSELECT(tabla, columna));
                 while (rs.next()) {
                     int id = rs.getInt(columna.get(0));
-                    int pagina = rs.getInt(columna.get(2));
-                    String iconPath = rs.getString(columna.get(3));
-                    int volumenID = rs.getInt(columna.get(4));
+                    int pagina = rs.getInt(columna.get(1));
+                    String iconPath = rs.getString(columna.get(2));
+                    int volumenID = rs.getInt(columna.get(3));
+                    paginas.add(new Pagina(id, pagina, iconPath, volumenID));
+                }
+                conexion.close();
+            }
+        } catch (SQLException ex) {
+            printSQLException(ex);
+        }
+        return paginas;
+    }
+    
+    public ArrayList<?> selectAllWhere(int vID) {
+        ArrayList<Pagina> paginas = new ArrayList<>();
+        try(Connection conexion = getConnection()) {
+            if(conexion != null) {
+                PreparedStatement ps = conexion.prepareStatement(gs.selectiveSELECT(tabla, columna,3));
+                ps.setInt(1, vID);
+                System.out.println(ps.toString());
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt(columna.get(0));
+                    int pagina = rs.getInt(columna.get(1));
+                    String iconPath = rs.getString(columna.get(2));
+                    int volumenID = rs.getInt(columna.get(3));
                     paginas.add(new Pagina(id, pagina, iconPath, volumenID));
                 }
                 conexion.close();

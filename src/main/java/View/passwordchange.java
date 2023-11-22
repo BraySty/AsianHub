@@ -4,12 +4,21 @@
  */
 package View;
 
+import Clases.Usuario;
+import Console.Main;
+import DAO.UsuarioDAO;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
+
 /**
  *
  * @author ale12
  */
 public class passwordchange extends javax.swing.JDialog {
 
+    Usuario usuario;
+    
     /**
      * Creates new form passwordchange
      */
@@ -19,6 +28,10 @@ public class passwordchange extends javax.swing.JDialog {
         this.setVisible(true);
     }
 
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -95,7 +108,13 @@ public class passwordchange extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
-        this.dispose();
+        String base = System.getProperty("user.dir") + "\\SQL\\AsianHub.db";
+        String urlDB = "jdbc:sqlite:" + base;
+        String usuarioDB = "";
+        String passwordDB = "";
+        UsuarioDAO udao = new UsuarioDAO(urlDB, usuarioDB, passwordDB);
+        Usuario user = new Usuario(usuario.getID(), usuario.getUser(), passwordnewGet.getText(), usuario.getAdmind());
+        udao.update(user);
     }//GEN-LAST:event_sendButtonActionPerformed
 
 

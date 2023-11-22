@@ -68,19 +68,16 @@ public class VolumenDAO implements CRUD{
             if(conexion != null) {
                 if(select(volumen) == null) {
                     PreparedStatement ps = conexion.prepareStatement(gs.generalINSERT(tabla, columna));
+                    System.out.println(ps.toString());
                     ps.setInt(1, volumen.getID());
                     ps.setString(2, volumen.getNombre());
-                    ps.setInt(3, volumen.getCapitulos());
-                    ps.setString(4, volumen.getIconPath());
+                    ps.setString(3, volumen.getIconPath());
+                    ps.setInt(4, volumen.getManggaID());
+                    ps.setInt(5, volumen.getCapitulos());
                     lineasAfectadas = ps.executeUpdate();
                     if(lineasAfectadas > 0){
                         resultadoOperacion = true;
-                        System.out.println("Volumen creado.");
-                    } else {
-                        System.out.println("Ocurrio un error en la operacion");
                     }
-                } else {
-                    System.out.println("Volumen ya existe");
                 }
                 conexion.close();
             }
@@ -100,9 +97,33 @@ public class VolumenDAO implements CRUD{
                 while (rs.next()) {
                     int id = rs.getInt(columna.get(0));
                     String nombre = rs.getString(columna.get(1));
-                    int capitulos = rs.getInt(columna.get(2));
-                    String iconPath = rs.getString(columna.get(3));
-                    int mangaID = rs.getInt(columna.get(4));
+                    String iconPath = rs.getString(columna.get(2));
+                    int mangaID = rs.getInt(columna.get(3));
+                    int capitulos = rs.getInt(columna.get(4));
+                    volumenes.add(new Volumen(id, nombre, iconPath, mangaID, capitulos));
+                }
+                conexion.close();
+            }
+        } catch (SQLException ex) {
+            printSQLException(ex);
+        }
+        return volumenes;
+    }
+    
+    public ArrayList<?> selectAllWhere(int mID) {
+        ArrayList<Volumen> volumenes = new ArrayList<>();
+        try(Connection conexion = getConnection()) {
+            if(conexion != null) {
+                PreparedStatement ps = conexion.prepareStatement(gs.selectiveSELECT(tabla, columna,3));
+                ps.setInt(1, mID);
+                System.out.println(ps.toString());
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt(columna.get(0));
+                    String nombre = rs.getString(columna.get(1));
+                    String iconPath = rs.getString(columna.get(2));
+                    int mangaID = rs.getInt(columna.get(3));
+                    int capitulos = rs.getInt(columna.get(4));
                     volumenes.add(new Volumen(id, nombre, iconPath, mangaID, capitulos));
                 }
                 conexion.close();
@@ -159,12 +180,7 @@ public class VolumenDAO implements CRUD{
                     lineasAfectadas = ps.executeUpdate();
                     if(lineasAfectadas > 0){
                         resultadoOperacion = true;
-                        System.out.println("Volumen actualizado.");
-                    }else {
-                        System.out.println("Ocurrio un error en la operacion");
                     }
-                } else {
-                    System.out.println("Volumen no existe");
                 }
                 conexion.close();
             }
@@ -187,12 +203,7 @@ public class VolumenDAO implements CRUD{
                     lineasAfectadas = ps.executeUpdate();
                     if(lineasAfectadas > 0){
                         resultadoOperacion = true;
-                        System.out.println("Volumen eliminado.");
-                    }else {
-                        System.out.println("Ocurrio un error en la operacion");
                     }
-                } else {
-                    System.out.println("Volumen no existe");
                 }
                 conexion.close();
             }
